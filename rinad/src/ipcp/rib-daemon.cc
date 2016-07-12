@@ -322,49 +322,57 @@ void IPCPCDAPIOHandler::invoke_callback(const rina::cdap_rib::con_handle_t& con_
 			callback_->delete_request(con_handle,
 						  obj,
 						  filt,
+						  m_rcv.auth_policy_,
 						  invoke_id);
 			break;
 		case rina::cdap::cdap_m_t::M_CREATE:
 			callback_->create_request(con_handle,
 						  obj,
 						  filt,
+						  m_rcv.auth_policy_,
 						  invoke_id);
 			break;
 		case rina::cdap::cdap_m_t::M_READ:
 			callback_->read_request(con_handle,
 						obj,
 						filt,
+						m_rcv.auth_policy_,
 						invoke_id);
 			break;
 		case rina::cdap::cdap_m_t::M_CANCELREAD:
 			callback_->cancel_read_request(con_handle,
 						       obj,
 						       filt,
+						       m_rcv.auth_policy_,
 						       invoke_id);
 			break;
 		case rina::cdap::cdap_m_t::M_WRITE:
 			callback_->write_request(con_handle,
 						 obj,
 						 filt,
+						 m_rcv.auth_policy_,
 						 invoke_id);
 			break;
 		case rina::cdap::cdap_m_t::M_START:
 			callback_->start_request(con_handle,
 						 obj,
 						 filt,
+						 m_rcv.auth_policy_,
 						 invoke_id);
 			break;
 		case rina::cdap::cdap_m_t::M_STOP:
 			callback_->stop_request(con_handle,
 						obj,
 						filt,
+						m_rcv.auth_policy_,
 						invoke_id);
 			break;
 
 		//Remote
 		case rina::cdap::cdap_m_t::M_CONNECT_R:
 			callback_->remote_open_connection_result(con_handle,
-								 res);
+								 res,
+								 m_rcv.auth_policy_);
 			break;
 		case rina::cdap::cdap_m_t::M_RELEASE_R:
 			callback_->remote_close_connection_result(con_handle,
@@ -508,7 +516,6 @@ void IPCPRIBDaemonImpl::set_application_process(rina::ApplicationProcess * ap)
 		LOG_IPCP_ERR("Bogus instance of IPCP passed, return");
 		return;
 	}
-
 
         n_minus_one_flow_manager_ = ipcp->resource_allocator_->get_n_minus_one_flow_manager();
 

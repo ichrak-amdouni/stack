@@ -169,7 +169,8 @@ class CDAPCallbackInterface
 	// Remote operation results
 	//
 	virtual void remote_open_connection_result(const cdap_rib::con_handle_t &con,
-						   const cdap_rib::result_info &res);
+						   const cdap_rib::result_info &res,
+						   const rina::cdap_rib::auth_policy_t &auth);
 	virtual void remote_close_connection_result(const cdap_rib::con_handle_t &con,
 						    const cdap_rib::result_info &res);
 	virtual void remote_create_result(const cdap_rib::con_handle_t &con,
@@ -214,30 +215,37 @@ class CDAPCallbackInterface
 	virtual void create_request(const cdap_rib::con_handle_t &con,
 				    const cdap_rib::obj_info_t &obj,
 				    const cdap_rib::filt_info_t &filt,
+				    const cdap_rib::auth_policy_t& auth,
 				    const int invoke_id);
 	virtual void delete_request(const cdap_rib::con_handle_t &con,
 				    const cdap_rib::obj_info_t &obj,
 				    const cdap_rib::filt_info_t &filt,
+				    const cdap_rib::auth_policy_t& auth,
 				    int invoke_id);
 	virtual void read_request(const cdap_rib::con_handle_t &con,
 				  const cdap_rib::obj_info_t &obj,
 				  const cdap_rib::filt_info_t &filt,
+				  const cdap_rib::auth_policy_t& auth,
 				  const int invoke_id);
 	virtual void cancel_read_request(const cdap_rib::con_handle_t &con,
 					 const cdap_rib::obj_info_t &obj,
 					 const cdap_rib::filt_info_t &filt,
+					 const cdap_rib::auth_policy_t& auth,
 					 const int invoke_id);
 	virtual void write_request(const cdap_rib::con_handle_t &con,
 				   const cdap_rib::obj_info_t &obj,
 				   const cdap_rib::filt_info_t &filt,
+				   const cdap_rib::auth_policy_t& auth,
 				   const int invoke_id);
 	virtual void start_request(const cdap_rib::con_handle_t &con,
 				   const cdap_rib::obj_info_t &obj,
 				   const cdap_rib::filt_info_t &filt,
+				   const cdap_rib::auth_policy_t& auth,
 				   const int invoke_id);
 	virtual void stop_request(const cdap_rib::con_handle_t &con,
 				  const cdap_rib::obj_info_t &obj,
 				  const cdap_rib::filt_info_t &filt,
+				  const cdap_rib::auth_policy_t& auth,
 				  const int invoke_id);
 };
 
@@ -285,6 +293,7 @@ public:
 				  const cdap_rib::obj_info_t &obj,
 				  const cdap_rib::flags_t &flags,
 				  const cdap_rib::filt_info_t &filt,
+				  const cdap_rib::auth_policy &auth,
 				  const int invoke_id = -1) = 0;
 
 	///
@@ -296,6 +305,7 @@ public:
 				  const cdap_rib::obj_info_t &obj,
 				  const cdap_rib::flags_t &flags,
 				  const cdap_rib::filt_info_t &filt,
+				  const cdap_rib::auth_policy &auth,
 				  const int invoke_id = -1) = 0;
 
 	///
@@ -307,6 +317,7 @@ public:
 				const cdap_rib::obj_info_t &obj,
 				const cdap_rib::flags_t &flags,
 				const cdap_rib::filt_info_t &filt,
+				const cdap_rib::auth_policy &auth,
 				const int invoke_id = -1)= 0;
 	///
 	/// Perform a cancel read operation over an object of the remote RIB
@@ -315,6 +326,7 @@ public:
 	///
 	virtual int remote_cancel_read(const cdap_rib::con_handle_t &con,
 				       const cdap_rib::flags_t &flags,
+				       const cdap_rib::auth_policy &auth,
 				       const int invoke_id = -1) = 0;
 
 	///
@@ -326,6 +338,7 @@ public:
 				 const cdap_rib::obj_info_t &obj,
 				 const cdap_rib::flags_t &flags,
 				 const cdap_rib::filt_info_t &filt,
+				 const cdap_rib::auth_policy &auth,
 				 const int invoke_id = -1) = 0;
 
 	///
@@ -337,6 +350,7 @@ public:
 				 const cdap_rib::obj_info_t &obj,
 				 const cdap_rib::flags_t &flags,
 				 const cdap_rib::filt_info_t &filt,
+				 const cdap_rib::auth_policy &auth,
 				 const int invoke_id = -1) = 0;
 
 	///
@@ -348,6 +362,7 @@ public:
 				const cdap_rib::obj_info_t &obj,
 				const cdap_rib::flags_t &flags,
 				const cdap_rib::filt_info_t &filt,
+				const cdap_rib::auth_policy &auth,
 				const int invoke_id = -1) = 0;
 
 	//
@@ -355,6 +370,10 @@ public:
 	//
 	virtual void send_open_connection_result(const cdap_rib::con_handle_t &con,
 						 const cdap_rib::res_info_t &res,
+						 int invoke_id) = 0;
+	virtual void send_open_connection_result(const cdap_rib::con_handle_t &con,
+						 const cdap_rib::res_info_t &res,
+						 const cdap_rib::auth_policy_t &auth,
 						 int invoke_id) = 0;
 	virtual void send_close_connection_result(unsigned int port,
 						  const cdap_rib::flags_t &flags,

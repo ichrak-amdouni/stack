@@ -2757,34 +2757,41 @@ class CDAPProvider : public CDAPProviderInterface
 			  const cdap_rib::obj_info_t &obj,
 			  const cdap_rib::flags_t &flags,
 			  const cdap_rib::filt_info_t &filt,
+			  const cdap_rib::auth_policy &auth,
 			  const int invoke_id = -1);
 	int remote_delete(const cdap_rib::con_handle_t &con,
 			  const cdap_rib::obj_info_t &obj,
 			  const cdap_rib::flags_t &flags,
 			  const cdap_rib::filt_info_t &filt,
+			  const cdap_rib::auth_policy &auth,
 			  const int invoke_id = -1);
 	int remote_read(const cdap_rib::con_handle_t &con,
 			const cdap_rib::obj_info_t &obj,
 			const cdap_rib::flags_t &flags,
 			const cdap_rib::filt_info_t &filt,
+			const cdap_rib::auth_policy &auth,
 			const int invoke_id = -1);
 	int remote_cancel_read(const cdap_rib::con_handle_t &con,
 			       const cdap_rib::flags_t &flags,
+			       const cdap_rib::auth_policy &auth,
 			       const int invoke_id = -1);
 	int remote_write(const cdap_rib::con_handle_t &con,
 			 const cdap_rib::obj_info_t &obj,
 			 const cdap_rib::flags_t &flags,
 			 const cdap_rib::filt_info_t &filt,
+			 const cdap_rib::auth_policy &auth,
 			 const int invoke_id = -1);
 	int remote_start(const cdap_rib::con_handle_t &con,
 			 const cdap_rib::obj_info_t &obj,
 			 const cdap_rib::flags_t &flags,
 			 const cdap_rib::filt_info_t &filt,
+			 const cdap_rib::auth_policy &auth,
 			 const int invoke_id = -1);
 	int remote_stop(const cdap_rib::con_handle_t &con,
 			const cdap_rib::obj_info_t &obj,
 			const cdap_rib::flags_t &flags,
 			const cdap_rib::filt_info_t &filt,
+			const cdap_rib::auth_policy &auth,
 			const int invoke_id = -1);
 
 	//Local
@@ -2792,6 +2799,10 @@ class CDAPProvider : public CDAPProviderInterface
 	void send_open_connection_result(const cdap_rib::con_handle_t &con,
 				         const cdap_rib::res_info_t &res,
 				         int invoke_id);
+	void send_open_connection_result(const cdap_rib::con_handle_t &con,
+					 const cdap_rib::res_info_t &res,
+					 const cdap_rib::auth_policy_t &auth,
+					 int invoke_id);
 	void send_close_connection_result(unsigned int port,
 				       	  const cdap_rib::flags_t &flags,
 				       	  const cdap_rib::res_info_t &res,
@@ -2907,6 +2918,7 @@ int CDAPProvider::remote_create(const cdap_rib::con_handle_t &con,
 				const cdap_rib::obj_info_t &obj,
 				const cdap_rib::flags_t &flags,
 				const cdap_rib::filt_info_t &filt,
+				const cdap_rib::auth_policy &auth,
 				const int invoke_id)
 {
 	cdap_m_t m_sent;
@@ -2929,6 +2941,7 @@ int CDAPProvider::remote_create(const cdap_rib::con_handle_t &con,
 		inv_id = invoke_id;
 	}
 
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
 	return inv_id;
 }
@@ -2937,6 +2950,7 @@ int CDAPProvider::remote_delete(const cdap_rib::con_handle_t &con,
 				const cdap_rib::obj_info_t &obj,
 				const cdap_rib::flags_t &flags,
 				const cdap_rib::filt_info_t &filt,
+				const cdap_rib::auth_policy &auth,
 				const int invoke_id)
 {
 	cdap_m_t m_sent;
@@ -2959,6 +2973,7 @@ int CDAPProvider::remote_delete(const cdap_rib::con_handle_t &con,
 		inv_id = invoke_id;
 	}
 
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
 	return inv_id;
 }
@@ -2967,6 +2982,7 @@ int CDAPProvider::remote_read(const cdap_rib::con_handle_t &con,
 			      const cdap_rib::obj_info_t &obj,
 			      const cdap_rib::flags_t &flags,
 			      const cdap_rib::filt_info_t &filt,
+			      const cdap_rib::auth_policy &auth,
 			      const int invoke_id)
 {
 	cdap_m_t m_sent;
@@ -2990,12 +3006,14 @@ int CDAPProvider::remote_read(const cdap_rib::con_handle_t &con,
 		inv_id = invoke_id;
 	}
 
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
 	return inv_id;
 }
 
 int CDAPProvider::remote_cancel_read(const cdap_rib::con_handle_t &con,
 				     const cdap_rib::flags_t &flags,
+				     const cdap_rib::auth_policy &auth,
 				     int invoke_id)
 {
 	cdap_m_t m_sent;
@@ -3003,6 +3021,7 @@ int CDAPProvider::remote_cancel_read(const cdap_rib::con_handle_t &con,
 	manager_->getCancelReadRequestMessage(m_sent,
 					      flags,
 					      invoke_id);
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
 
 	return invoke_id;
@@ -3012,6 +3031,7 @@ int CDAPProvider::remote_write(const cdap_rib::con_handle_t &con,
 			       const cdap_rib::obj_info_t &obj,
 			       const cdap_rib::flags_t &flags,
 			       const cdap_rib::filt_info_t &filt,
+			       const cdap_rib::auth_policy &auth,
 			       const int invoke_id)
 {
 	cdap_m_t m_sent;
@@ -3033,7 +3053,9 @@ int CDAPProvider::remote_write(const cdap_rib::con_handle_t &con,
 		m_sent.invoke_id_ = invoke_id;
 		inv_id = invoke_id;
 	}
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
+
 	return inv_id;
 }
 
@@ -3041,6 +3063,7 @@ int CDAPProvider::remote_start(const cdap_rib::con_handle_t &con,
 			       const cdap_rib::obj_info_t &obj,
 			       const cdap_rib::flags_t &flags,
 			       const cdap_rib::filt_info_t &filt,
+			       const cdap_rib::auth_policy &auth,
 			       const int invoke_id)
 {
 	cdap_m_t m_sent;
@@ -3063,7 +3086,9 @@ int CDAPProvider::remote_start(const cdap_rib::con_handle_t &con,
 		inv_id = invoke_id;
 	}
 
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
+
 	return inv_id;
 }
 
@@ -3071,6 +3096,7 @@ int CDAPProvider::remote_stop(const cdap_rib::con_handle_t &con,
 			      const cdap_rib::obj_info_t &obj,
 			      const cdap_rib::flags_t &flags,
 			      const cdap_rib::filt_info_t &filt,
+			      const cdap_rib::auth_policy &auth,
 			      const int invoke_id)
 {
 	cdap_m_t m_sent;
@@ -3094,7 +3120,9 @@ int CDAPProvider::remote_stop(const cdap_rib::con_handle_t &con,
 		inv_id = invoke_id;
 	}
 
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
+
 	return inv_id;
 }
 
@@ -3108,6 +3136,21 @@ void CDAPProvider::send_open_connection_result(const cdap_rib::con_handle_t &con
 						   con,
 						   res,
 						   invoke_id);
+	send(m_sent, con);
+}
+
+void CDAPProvider::send_open_connection_result(const cdap_rib::con_handle_t &con,
+					       const cdap_rib::res_info_t &res,
+					       const cdap_rib::auth_policy_t &auth,
+					       int invoke_id)
+{
+	cdap_m_t m_sent;
+
+	manager_->getOpenConnectionResponseMessage(m_sent,
+						   con,
+						   res,
+						   invoke_id);
+	m_sent.auth_policy_ = auth;
 	send(m_sent, con);
 }
 
@@ -3335,49 +3378,57 @@ void AppCDAPIOHandler::process_message(const ser_obj_t &message,
 			callback_->delete_request(con,
 						  obj,
 						  filt,
+						  m_rcv.auth_policy_,
 						  invoke_id);
 			break;
 		case cdap_m_t::M_CREATE:
 			callback_->create_request(con,
 						  obj,
 						  filt,
+						  m_rcv.auth_policy_,
 						  invoke_id);
 			break;
 		case cdap_m_t::M_READ:
 			callback_->read_request(con,
 						obj,
 						filt,
+						m_rcv.auth_policy_,
 						invoke_id);
 			break;
 		case cdap_m_t::M_CANCELREAD:
 			callback_->cancel_read_request(con,
 						       obj,
 						       filt,
+						       m_rcv.auth_policy_,
 						       invoke_id);
 			break;
 		case cdap_m_t::M_WRITE:
 			callback_->write_request(con,
 						 obj,
 						 filt,
+						 m_rcv.auth_policy_,
 						 invoke_id);
 			break;
 		case cdap_m_t::M_START:
 			callback_->start_request(con,
 						 obj,
 						 filt,
+						 m_rcv.auth_policy_,
 						 invoke_id);
 			break;
 		case cdap_m_t::M_STOP:
 			callback_->stop_request(con,
 						obj,
 						filt,
+						m_rcv.auth_policy_,
 						invoke_id);
 			break;
 
 		//Remote
 		case cdap_m_t::M_CONNECT_R:
 			callback_->remote_open_connection_result(con,
-								 res);
+								 res,
+								 m_rcv.auth_policy_);
 			break;
 		case cdap_m_t::M_RELEASE_R:
 			callback_->remote_close_connection_result(con,
@@ -3466,9 +3517,9 @@ void AppCDAPIOHandler::send(const cdap_m_t & m_sent,
 CDAPCallbackInterface::~CDAPCallbackInterface()
 {
 }
-void CDAPCallbackInterface::remote_open_connection_result(
-		const cdap_rib::con_handle_t &con,
-		const cdap_rib::result_info &res)
+void CDAPCallbackInterface::remote_open_connection_result(const cdap_rib::con_handle_t &con,
+							  const cdap_rib::result_info &res,
+							  const rina::cdap_rib::auth_policy_t &auth)
 {
 	LOG_INFO("Callback open_connection_result operation not implemented");
 }
@@ -3477,9 +3528,8 @@ void CDAPCallbackInterface::open_connection(const cdap_rib::con_handle_t &con,
 {
 	LOG_INFO("Callback open_connection operation not implemented");
 }
-void CDAPCallbackInterface::remote_close_connection_result(
-		const cdap_rib::con_handle_t &con,
-		const cdap_rib::result_info &res)
+void CDAPCallbackInterface::remote_close_connection_result(const cdap_rib::con_handle_t &con,
+							   const cdap_rib::result_info &res)
 {
 	LOG_INFO("Callback close_connection_result operation not implemented");
 
@@ -3549,49 +3599,63 @@ void CDAPCallbackInterface::remote_stop_result(const cdap_rib::con_handle_t &con
 void CDAPCallbackInterface::create_request(
 		const cdap_rib::con_handle_t &con,
 		const cdap_rib::obj_info_t &obj,
-		const cdap_rib::filt_info_t &filt, int invoke_id)
+		const cdap_rib::filt_info_t &filt,
+		const cdap_rib::auth_policy_t &auth,
+		int invoke_id)
 {
 	LOG_INFO("Callback create_request operation not implemented");
 }
 void CDAPCallbackInterface::delete_request(
 		const cdap_rib::con_handle_t &con,
 		const cdap_rib::obj_info_t &obj,
-		const cdap_rib::filt_info_t &filt, int invoke_id)
+		const cdap_rib::filt_info_t &filt,
+		const cdap_rib::auth_policy_t &auth,
+		int invoke_id)
 {
 	LOG_INFO("Callback delete_request operation not implemented");
 }
 void CDAPCallbackInterface::read_request(
 		const cdap_rib::con_handle_t &con,
 		const cdap_rib::obj_info_t &obj,
-		const cdap_rib::filt_info_t &filt, int invoke_id)
+		const cdap_rib::filt_info_t &filt,
+		const cdap_rib::auth_policy_t &auth,
+		int invoke_id)
 {
 	LOG_INFO("Callback read_request operation not implemented");
 }
 void CDAPCallbackInterface::cancel_read_request(
 		const cdap_rib::con_handle_t &con,
 		const cdap_rib::obj_info_t &obj,
-		const cdap_rib::filt_info_t &filt, int invoke_id)
+		const cdap_rib::filt_info_t &filt,
+		const cdap_rib::auth_policy_t &auth,
+		int invoke_id)
 {
 	LOG_INFO("Callback cancel_read_request operation not implemented");
 }
 void CDAPCallbackInterface::write_request(
 		const cdap_rib::con_handle_t &con,
 		const cdap_rib::obj_info_t &obj,
-		const cdap_rib::filt_info_t &filt, int invoke_id)
+		const cdap_rib::filt_info_t &filt,
+		const cdap_rib::auth_policy_t &auth,
+		int invoke_id)
 {
 	LOG_INFO("Callback write_request operation not implemented");
 }
 void CDAPCallbackInterface::start_request(
 		const cdap_rib::con_handle_t &con,
 		const cdap_rib::obj_info_t &obj,
-		const cdap_rib::filt_info_t &filt, int invoke_id)
+		const cdap_rib::filt_info_t &filt,
+		const cdap_rib::auth_policy_t &auth,
+		int invoke_id)
 {
 	LOG_INFO("Callback start_request operation not implemented");
 }
 void CDAPCallbackInterface::stop_request(
 		const cdap_rib::con_handle_t &con,
 		const cdap_rib::obj_info_t &obj,
-		const cdap_rib::filt_info_t &filt, int invoke_id)
+		const cdap_rib::filt_info_t &filt,
+		const cdap_rib::auth_policy_t &auth,
+		int invoke_id)
 {
 	LOG_INFO("Callback stop_request operation not implemented");
 }
